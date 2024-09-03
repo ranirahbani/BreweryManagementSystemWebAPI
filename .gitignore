@@ -1,0 +1,41 @@
+# Ignore the build output directory
+bin/
+obj/
+
+# Ignore user-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore Visual Studio temporary files
+.vs/
+
+# Ignore NuGet packages
+*.nupkg
+*.snupkg
+.nuget/
+
+# Ignore npm packages
+node_modules/
+
+# Ignore log files
+*.log
+
+# Ignore local environment files
+.env
+
+# Ignore JetBrains Rider IDE files
+.idea/
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Windows system files
+Thumbs.db
+ehthumbs.db
+
+# Ignore other configuration files
+*.swp
+*.swo
+*.swn
