@@ -309,7 +309,6 @@ namespace BreweryManagementSystemWebAPI.Tests
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             Assert.Equal("Error: The beer must be sold by the wholesaler.\r\n", badRequestResult.Value);
-
         }
 
     }
