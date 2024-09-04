@@ -46,6 +46,8 @@ namespace BreweryManagementSystemWebAPI.Controllers
             }
             catch (Exception ex)
             {
+                //write Log
+                Logger.LogError(nameof(AddSaleToWholesalerAsync), ex.Message);
                 // Return the detailed Error message in the response
                 return BadRequest(ex.Message);
             }
@@ -79,6 +81,8 @@ namespace BreweryManagementSystemWebAPI.Controllers
             }
             catch (Exception ex)
             {
+                //write Log
+                Logger.LogError(nameof(UpdateWholesalerStockAsync), ex.Message);
                 // Return the detailed Error message in the response
                 return BadRequest(ex.Message);
             }
@@ -101,6 +105,8 @@ namespace BreweryManagementSystemWebAPI.Controllers
             }
             catch (Exception ex)
             {
+                //write Log
+                Logger.LogError(nameof(GenerateQuoteAsync), ex.Message);
                 // Return the detailed Error message in the response
                 return BadRequest(ex.Message);
             }

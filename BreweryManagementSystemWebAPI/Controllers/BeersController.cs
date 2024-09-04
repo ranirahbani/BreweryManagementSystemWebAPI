@@ -39,6 +39,8 @@ public class BeerController : ControllerBase
         }
         catch (Exception ex)
         {
+            //write Log
+            Logger.LogError(nameof(ListBeersByBrewery), ex.Message);
             // Return the detailed Error message in the response
             return BadRequest(ex.Message);
         }
@@ -72,6 +74,8 @@ public class BeerController : ControllerBase
         }
         catch (Exception ex)
         {
+            //write Log
+            Logger.LogError(nameof(AddBeer), ex.Message);
             // Return the detailed Error message in the response
             return BadRequest(ex.Message);
         }
@@ -106,6 +110,8 @@ public class BeerController : ControllerBase
         }
         catch (Exception ex)
         {
+            //write Log
+            Logger.LogError(nameof(DeleteBeer), ex.Message);
             // Return the detailed Error message in the response
             return BadRequest(ex.Message);
         }
