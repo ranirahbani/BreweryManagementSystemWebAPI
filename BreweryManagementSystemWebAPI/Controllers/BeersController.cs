@@ -19,6 +19,9 @@ public class BeerController : ControllerBase
     //public async Task<IActionResult> ListBeersByBrewery([FromQuery] int? breweryId, [FromQuery] string? breweryName)
     public async Task<IActionResult> ListBeersByBrewery([FromBody] BreweryDto? breweryDto)
     {
+
+        var timeout = TimeSpan.FromSeconds(30);
+
         try
         {
 
@@ -34,8 +37,22 @@ public class BeerController : ControllerBase
 
             };
 
-            var beers = await _beerService.ListBeersByBreweryAsync(brewery.br_Id, brewery.br_Name);
-            return Ok(beers);
+            // Wrap the service call in a task and enforce a timeout
+            var task = Task.Run(() => _beerService.ListBeersByBreweryAsync(brewery.br_Id, brewery.br_Name));
+
+            if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
+            {
+                // Operation completed within the timeout
+                var beers = await task; // Await the task to get the result
+                return Ok(beers);
+            }
+            else
+            {
+                // Timeout occurred
+                string errorMessage = "Timeout occurred while listing beers by brewery.";
+                Logger.LogError(nameof(ListBeersByBrewery), errorMessage);
+                return StatusCode(504, errorMessage);
+            }
         }
         catch (Exception ex)
         {
@@ -50,6 +67,8 @@ public class BeerController : ControllerBase
     [HttpPost("AddBeer")]
     public async Task<IActionResult> AddBeer([FromBody] BeerDto? beerDto)
     {
+
+        var timeout = TimeSpan.FromSeconds(30);
 
         try
         {
@@ -69,8 +88,21 @@ public class BeerController : ControllerBase
 
             };
 
-            var addedBeer = await _beerService.AddBeerAsync(beerDto.be_Name, beerDto.be_AlcoholContent, beerDto.be_Price, beerDto.br_Id, beerDto.br_Name);
-            return Ok(addedBeer);
+            var task = Task.Run(() => _beerService.AddBeerAsync(beerDto.be_Name, beerDto.be_AlcoholContent, beerDto.be_Price, beerDto.br_Id, beerDto.br_Name));
+
+            if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
+            {
+                // Operation completed within the timeout
+                var addedBeer = await task; // Await the task to get the result
+                return Ok(addedBeer);
+            }
+            else
+            {
+                // Timeout occurred
+                string errorMessage = "Timeout occurred while adding beer.";
+                Logger.LogError(nameof(AddBeer), errorMessage);
+                return StatusCode(504, errorMessage);
+            }
         }
         catch (Exception ex)
         {
@@ -86,6 +118,8 @@ public class BeerController : ControllerBase
     //public async Task<IActionResult> DeleteBeer([FromQuery] int? beerId, [FromQuery] string? beerName)
     public async Task<IActionResult> DeleteBeer([FromBody] BeerDto? beerDto)
     {
+
+        var timeout = TimeSpan.FromSeconds(5);
 
         try
         {
@@ -105,8 +139,21 @@ public class BeerController : ControllerBase
 
             };
 
-            var deletedBeer = await _beerService.DeleteBeerAsync(beer.be_Id, beer.be_Name);
-            return Ok(deletedBeer);
+            var task = Task.Run(() => _beerService.DeleteBeerAsync(beer.be_Id, beer.be_Name));
+
+            if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
+            {
+                // Operation completed within the timeout
+                var deletedBeer = await task; // Await the task to get the result
+                return Ok(deletedBeer);
+            }
+            else
+            {
+                // Timeout occurred
+                string errorMessage = "Timeout occurred while deleting beer.";
+                Logger.LogError(nameof(DeleteBeer), errorMessage);
+                return StatusCode(504, errorMessage);
+            }
         }
         catch (Exception ex)
         {

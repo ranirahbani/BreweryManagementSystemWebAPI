@@ -24,6 +24,8 @@ namespace BreweryManagementSystemWebAPI.Controllers
         public async Task<IActionResult> AddSaleToWholesalerAsync([FromBody] WholesalerStockDto? wholesalerStockDto)
         {
 
+            var timeout = TimeSpan.FromSeconds(30);
+
             try
             {
                 if (wholesalerStockDto == null)
@@ -41,8 +43,21 @@ namespace BreweryManagementSystemWebAPI.Controllers
 
                 };
 
-                var Wholesaler = await _wholesalerStockService.AddSaleToWholesalerAsync(wss.wh_Id, wss.wh_Name, wss.be_Id, wss.be_Name, wss.ws_Quantity);
-                return Ok(Wholesaler);
+                var task = Task.Run(() => _wholesalerStockService.AddSaleToWholesalerAsync(wss.wh_Id, wss.wh_Name, wss.be_Id, wss.be_Name, wss.ws_Quantity));
+
+                if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
+                {
+                    // Operation completed within the timeout
+                    var wholesaler = await task; // Await the task to get the result
+                    return Ok(wholesaler);
+                }
+                else
+                {
+                    // Timeout occurred
+                    string errorMessage = "Timeout occurred while adding sale to wholesaler.";
+                    Logger.LogError(nameof(AddSaleToWholesalerAsync), errorMessage);
+                    return StatusCode(504, errorMessage);
+                }
             }
             catch (Exception ex)
             {
@@ -59,6 +74,8 @@ namespace BreweryManagementSystemWebAPI.Controllers
         public async Task<IActionResult> UpdateWholesalerStockAsync([FromBody] WholesalerStockDto? wholesalerStockDto)
         {
 
+            var timeout = TimeSpan.FromSeconds(30);
+
             try
             {
                 if (wholesalerStockDto == null)
@@ -76,8 +93,21 @@ namespace BreweryManagementSystemWebAPI.Controllers
 
                 };
 
-                var Wholesaler = await _wholesalerStockService.UpdateWholesalerStockAsync(wss.wh_Id, wss.wh_Name, wss.be_Id, wss.be_Name, wss.ws_Quantity);
-                return Ok(Wholesaler);
+                var task = Task.Run(() => _wholesalerStockService.UpdateWholesalerStockAsync(wss.wh_Id, wss.wh_Name, wss.be_Id, wss.be_Name, wss.ws_Quantity));
+
+                if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
+                {
+                    // Operation completed within the timeout
+                    var wholesaler = await task; // Await the task to get the result
+                    return Ok(wholesaler);
+                }
+                else
+                {
+                    // Timeout occurred
+                    string errorMessage = "Timeout occurred while updating wholesaler stock.";
+                    Logger.LogError(nameof(UpdateWholesalerStockAsync), errorMessage);
+                    return StatusCode(504, errorMessage);
+                }
             }
             catch (Exception ex)
             {
@@ -93,10 +123,27 @@ namespace BreweryManagementSystemWebAPI.Controllers
         //public async Task<ActionResult<QuoteDto>> GenerateQuoteAsync(int? wholesalerId, string? wholesalerName, [FromBody] IEnumerable<BeerOrderDto> beerOrderList)
         public async Task<ActionResult<QuoteDto>> GenerateQuoteAsync([FromBody] QuoteRequestDto quoteRequest)
         {
+            var timeout = TimeSpan.FromSeconds(30);
+
             try
             {
-                var quoteResponse = await _wholesalerStockService.GenerateQuoteAsync(quoteRequest.WholesalerId ?? 0, quoteRequest.WholesalerName ?? "", quoteRequest.BeerOrderList);
-                return Ok(quoteResponse);
+                var task = Task.Run(() => _wholesalerStockService.GenerateQuoteAsync(quoteRequest.WholesalerId ?? 0, quoteRequest.WholesalerName ?? "", quoteRequest.BeerOrderList));
+
+                if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
+                {
+                    // Operation completed within the timeout
+                    var quoteResponse = await task; // Await the task to get the result
+                    return Ok(quoteResponse);
+                }
+                else
+                {
+                    // Timeout occurred
+                    string errorMessage = "Timeout occurred while generating quote.";
+                    Logger.LogError(nameof(GenerateQuoteAsync), errorMessage);
+                    return StatusCode(504, errorMessage);
+                }
+
+
                 //if (quoteResponse != null)
                 //{
                 //    return Ok(quoteResponse);
